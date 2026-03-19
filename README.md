@@ -51,6 +51,10 @@ npm start
 - No installation required on Windows; single portable executable.
 - No telemetry, no account, no network use except for opening external links in the browser.
 
+## Code signing policy
+
+See [CODE_SIGNING_POLICY.md](./CODE_SIGNING_POLICY.md).
+
 ## License
 
 MIT. Third-party licenses (e.g. FFmpeg) are listed in [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md).
