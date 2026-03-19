@@ -690,9 +690,9 @@ main {
 }
 
 .website-container {
-    padding: 15px 20px;
-    background: linear-gradient(135deg, rgba(193, 42, 31, 0.05) 0%, rgba(193, 42, 31, 0.02) 100%);
-    border-top: 1px solid rgba(193, 42, 31, 0.1);
+    padding: 12px 20px;
+    background: transparent;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
     text-align: center;
 }
 
@@ -702,15 +702,15 @@ main {
 
 .website-link {
     text-decoration: none;
-    color: #c12a1f;
-    font-size: 13px;
-    font-weight: 500;
-    transition: all 0.2s ease;
+    color: #666;
+    font-size: 12px;
+    font-weight: 400;
+    transition: color 0.2s ease;
     display: inline-block;
 }
 
 .website-link:hover {
-    color: #a01f17;
+    color: #333;
     text-decoration: underline;
 }
 
