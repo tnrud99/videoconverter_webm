@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VE Video Converter</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="https://cdn.jsdelivr.net/gh/tnrud99/viewer-assets@main/logo/VEfavicon.png">
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Advertisements are limited in Electron apps, so replaced with sponsor area -->
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <div class="logo"></div>
+            </div>
+            <h1>📹 VE Video Converter</h1>
+            <p class="subtitle">Simple and fast WebM to MP4 conversion</p>
+        </header>
+
+        <main>
+            <div class="drop-zone" id="dropZone">
+                <div class="drop-content">
+                    <div class="icon">📁</div>
+                    <p class="drop-text">Drag and drop your file here</p>
+                    <p class="drop-subtext">or click the button below</p>
+                    <button class="btn btn-primary" id="selectBtn">Select File</button>
+                </div>
+            </div>
+
+            <div class="file-info" id="fileInfo" style="display: none;">
+                <div class="info-row">
+                    <span class="label">Input File:</span>
+                    <span class="value" id="inputFileName">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">File Size:</span>
+                    <span class="value" id="fileSize">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Output File:</span>
+                    <span class="value" id="outputFileName">-</span>
+                    <button class="btn-change-output" id="changeOutputBtn" title="Change output file location">✏️</button>
+                </div>
+            </div>
+
+            <div class="options-panel" id="optionsPanel" style="display: none;">
+                <h3>Conversion Options</h3>
+                
+                <div class="options-content">
+                    <div class="option-group">
+                        <label for="resolution">
+                            Resolution
+                        </label>
+                        <select id="resolution" class="select-input">
+                            <option value="1080p" selected>1080p (1920×1080) - Full HD</option>
+                            <option value="720p">720p (1280×720) - HD</option>
+                            <option value="480p">480p (854×480) - SD</option>
+                            <option value="360p">360p (640×360) - Low</option>
+                        </select>
+                        <span class="help-text" id="resolutionHelp">1080p - Best quality, larger file size</span>
+                    </div>
+
+                    <div class="option-group">
+                        <label for="qualityPreset">
+                            Video Quality
+                        </label>
+                        <select id="qualityPreset" class="select-input">
+                            <option value="best">Original Plus (Slow - CRF 18)</option>
+                            <option value="high" selected>High-Quality Web (Slow - CRF 20)</option>
+                            <option value="medium">Balanced (Medium - CRF 23)</option>
+                            <option value="fast">Lightweight (Fast - CRF 26)</option>
+                        </select>
+                        <span class="help-text" id="qualityHelp">Best for high-res web video sources.</span>
+                    </div>
+
+                    <div class="option-group">
+                        <label for="audioBitrate">
+                            Audio Bitrate
+                        </label>
+                        <select id="audioBitrate" class="select-input">
+                            <option value="128">128 kbps (Default)</option>
+                            <option value="192">192 kbps (Standard)</option>
+                            <option value="256" selected>256 kbps (High Quality)</option>
+                            <option value="320">320 kbps (Best Quality)</option>
+                        </select>
+                        <span class="help-text">256 kbps - High quality audio</span>
+                    </div>
+                </div>
+                
+                <div class="estimated-time-preview" id="estimatedTimePreview" style="display: none;">
+                    <div class="estimated-time-content">
+                        <span class="estimated-time-icon">⏱️</span>
+                        <span class="estimated-time-label">Estimated conversion time:</span>
+                        <span class="estimated-time-value" id="estimatedTimeValue">~0:00</span>
+                    </div>
+                    <div class="estimated-time-note">
+                        <span class="estimated-time-note-text">* Based on current settings (default: ~1 minute per 100MB)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="progress-container" id="progressContainer" style="display: none;">
+                <div class="progress-loading">
+                    <div class="spinner"></div>
+                    <p class="progress-message" id="progressMessage">Processing...</p>
+                </div>
+                <div class="progress-step" id="progressStep" style="display: none;">
+                    <p class="step-text" id="stepText">Initializing...</p>
+                </div>
+                <div class="progress-time-info" id="progressTimeInfo" style="display: none;">
+                    <div class="time-row">
+                        <span class="time-label">⏱️ Elapsed:</span>
+                        <span class="time-value" id="elapsedTime">0:00</span>
+                    </div>
+                    <div class="time-row">
+                        <span class="time-label">📊 Estimated:</span>
+                        <span class="time-value" id="estimatedTime">~0:00</span>
+                    </div>
+                    <div class="time-row">
+                        <span class="time-label">⏳ Remaining:</span>
+                        <span class="time-value" id="remainingTime">~0:00</span>
+                    </div>
+                </div>
+                <div class="progress-file-info" id="progressFileInfo" style="display: none;">
+                    <p class="file-info-text" id="fileInfoText"></p>
+                </div>
+                <div class="progress-time-warning" id="progressTimeWarning" style="display: none;">
+                    <strong>⏱️ Note:</strong> Conversion time may vary depending on your computer's performance and system resources. The estimated time is approximate.
+                </div>
+                <div class="progress-warning" id="progressWarning" style="display: none;">
+                    <strong>ℹ️ Important:</strong> The conversion will continue in the background even if you close this window. Please avoid running duplicate conversions. The output folder will open automatically when finished.
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-primary btn-large" id="convertBtn" disabled>
+                    Start Conversion
+                </button>
+                <button class="btn btn-danger" id="cancelBtn" style="display: none;">
+                    Cancel Conversion
+                </button>
+                <button class="btn btn-secondary" id="resetBtn" style="display: none;">
+                    Start Over
+                </button>
+            </div>
+
+            <div class="status" id="status"></div>
+            
+            <!-- Info Tooltip Popup -->
+            <div class="info-popup" id="infoPopup" style="display: none;">
+                <div class="info-popup-content">
+                    <button class="info-popup-close" id="infoPopupClose">×</button>
+                    <p id="infoPopupText"></p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Website Link -->
+        <div class="website-container">
+            <div class="website-content">
+                <a href="https://www.virtuedit.com" target="_blank" class="website-link">
+                    <span>Visit VirtueEdit Website →</span>
+                </a>
+            </div>
+        </div>
+
+        <footer>
+            <p>Powered by FFmpeg | Fast and reliable conversion</p>
+        </footer>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>
